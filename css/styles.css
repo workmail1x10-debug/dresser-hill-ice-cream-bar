@@ -965,6 +965,7 @@ p  { margin: 0 0 1em; color: var(--soft-ink); }
 .form .row { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; margin-bottom: 1rem; }
 .form .row--single { grid-template-columns: 1fr; }
 @media (max-width: 600px) { .form .row { grid-template-columns: 1fr; } }
+.form .row > * { min-width: 0; }
 .form label {
   display: block;
   font-size: .82rem;
@@ -975,13 +976,20 @@ p  { margin: 0 0 1em; color: var(--soft-ink); }
   text-transform: uppercase;
 }
 .form input, .form select, .form textarea {
+  display: block;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: .85rem 1rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   font: inherit;
   background: var(--cream);
   transition: border-color .2s, background .2s, box-shadow .2s;
+}
+.form input[type="date"] {
+  appearance: none;
+  -webkit-appearance: none;
 }
 .form input:focus, .form select:focus, .form textarea:focus {
   outline: 0;
@@ -1004,6 +1012,9 @@ p  { margin: 0 0 1em; color: var(--soft-ink); }
 
 /* ---------- Apply page ---------- */
 .apply-wrap { max-width: 760px; margin: 0 auto; }
+.apply-wrap > *,
+.contact-grid > *,
+.why-grid > * { min-width: 0; }
 .apply-disclaimer {
   font-size: .88rem;
   color: var(--soft-ink);
@@ -1320,11 +1331,12 @@ p  { margin: 0 0 1em; color: var(--soft-ink); }
     min-height: 48px;
     padding: .9rem 1rem;
   }
+  .form input[type="date"] { overflow: hidden; }
   .form textarea { min-height: 140px; }
-  .form .row, .form .row--single { grid-template-columns: 1fr; gap: .75rem; }
+  .form .row, .form .row--single { grid-template-columns: 1fr; gap: .75rem; margin-bottom: .9rem; }
 
   /* Contact panel */
-  .contact-panel { padding: 1.5rem; }
+  .contact-panel { width: 100%; max-width: 100%; padding: 1.5rem; }
   .contact-panel .info-row { padding: .6rem 0; gap: .7rem; }
   .contact-map-below { padding-top: 2.25rem; }
 
@@ -1402,6 +1414,9 @@ p  { margin: 0 0 1em; color: var(--soft-ink); }
 }
 
 @media (max-width: 420px) {
+  .form { padding: 1.25rem; }
+  .contact-panel { padding: 1.25rem; }
+  .why-card { padding: 1.35rem 1.1rem; }
   .hero__meta { gap: .8rem 1.2rem; }
   .hero__cta { flex-direction: column; width: 100%; }
   .hero__cta .btn { width: 100%; }
