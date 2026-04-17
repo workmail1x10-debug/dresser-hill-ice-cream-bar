@@ -211,16 +211,66 @@
     });
   }
 
-  /* ---------- Contact / apply forms ---------- */
+  /* ---------- Contact / apply forms (Web3Forms) ---------- */
   function setupContactForm() {
     document.querySelectorAll('.form').forEach((form) => {
       const success = form.querySelector('.form-success');
       if (!success) return;
-      form.addEventListener('submit', (e) => {
+      const accessKey = form.querySelector('input[name="access_key"]');
+      if (!accessKey) return;
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalBtnHTML = submitBtn ? submitBtn.innerHTML : '';
+
+      let errorEl = form.querySelector('.form-error');
+      if (!errorEl) {
+        errorEl = document.createElement('div');
+        errorEl.className = 'form-error';
+        errorEl.setAttribute('role', 'alert');
+        success.parentNode.insertBefore(errorEl, success);
+      }
+
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        success.classList.add('show');
-        form.reset();
-        setTimeout(() => success.classList.remove('show'), 6000);
+
+        const botcheck = form.querySelector('input[name="botcheck"]');
+        if (botcheck && botcheck.checked) return;
+
+        success.classList.remove('show');
+        errorEl.classList.remove('show');
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Sending…';
+        }
+
+        try {
+          const res = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: new FormData(form),
+          });
+          const data = await res.json().catch(() => ({}));
+
+          if (res.ok && data.success) {
+            success.classList.add('show');
+            form.reset();
+            setTimeout(() => success.classList.remove('show'), 8000);
+          } else {
+            errorEl.textContent = (data && data.message)
+              ? data.message
+              : 'Something went wrong. Please try again or call us at (508) 434-0100.';
+            errorEl.classList.add('show');
+          }
+        } catch (err) {
+          errorEl.textContent = 'Network error. Please try again or call us at (508) 434-0100.';
+          errorEl.classList.add('show');
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnHTML;
+          }
+        }
       });
     });
   }
